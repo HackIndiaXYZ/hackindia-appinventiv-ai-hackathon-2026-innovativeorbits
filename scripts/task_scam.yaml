@@ -1,0 +1,151 @@
+# Stub. Structure must stay identical to digital_arrest.yaml.
+# Fill in the remaining phrasing patterns while collecting transcripts.
+
+id: task_scam
+name: Job or task based investment scam
+typical_channel:
+  - telegram
+  - whatsapp
+description: >
+  A part time job offer arrives unsolicited. The target likes videos or rates
+  hotels, receives small real payouts, then is moved to a Telegram group where
+  prepaid tasks require depositing money to unlock a larger commission. The
+  balance shown in the app is fabricated. Withdrawal is blocked behind an
+  endless series of fees. Authority here is manufactured through a fake company
+  name and through visible group members claiming successful withdrawals.
+
+hard_claims_to_verify:
+  - claim_type: company_identity
+    example: an HR recruiter naming a real recruitment or marketing firm
+    verifier_check: >
+      Check whether the named firm actually recruits this way and whether the
+      recruiter uses a corporate domain. A gmail or a Telegram handle only is
+      false.
+  - claim_type: platform_url
+    example: an investment or task dashboard on a fresh domain
+    verifier_check: >
+      Check domain registration age and whether the operator is a SEBI or RBI
+      regulated entity. Unregulated plus newly registered is false.
+  - claim_type: displayed_balance_or_returns
+    example: a wallet balance of 4 lakh shown inside the app
+    verifier_check: >
+      The balance exists only as a number rendered by the operator. Treat every
+      in app balance as unverifiable and say so plainly to the user.
+  - claim_type: withdrawal_fee_or_tax
+    example: pay 30 percent tax before withdrawal is released
+    verifier_check: >
+      No lawful platform requires a payment from the user to release the user's
+      own funds. Always false.
+  - claim_type: payee_upi_or_account
+    example: a rotating set of personal accounts for deposits
+    verifier_check: >
+      Check whether the payee name changes between deposits. A rotating payee
+      is a mule network and is false.
+
+stages:
+  - stage: 1
+    name: Authority impersonation
+    description: A recruiter or an analyst from a plausible sounding firm makes the offer.
+    phrasing_patterns:
+      english:
+        - I am an HR executive from a digital marketing company, your profile was shortlisted
+        - Our senior analyst will guide the group personally
+      hindi:
+        - Main digital marketing company se HR executive hoon, aapka profile shortlist hua hai
+        - Humare senior analyst group ko khud guide karenge
+      telugu:
+        - నేను డిజిటల్ మార్కెటింగ్ కంపెనీ నుండి HR, మీ ప్రొఫైల్ షార్ట్‌లిస్ట్ అయింది
+        - మా సీనియర్ అనలిస్ట్ గ్రూప్‌ను స్వయంగా గైడ్ చేస్తారు
+    emotional_lever: Being selected, plus deference to a named institution.
+    likely_next_moves:
+      - stage: 2
+        move: Move the target to a Telegram group with a limited number of seats
+      - stage: 5
+        move: Pay a small real commission to establish that the system works
+
+  - stage: 2
+    name: Manufactured urgency
+    description: Limited slots, a task timer, a bonus window that closes.
+    phrasing_patterns:
+      english:
+        - Only 3 slots left in today's batch, confirm now
+        - Complete the prepaid task within 20 minutes or the commission lapses
+      hindi:
+        - Aaj ke batch mein sirf teen slot bache hain, abhi confirm kijiye
+        - Bees minute mein prepaid task karo warna commission chala jayega
+      telugu:
+        - ఈరోజు బ్యాచ్‌లో మూడు స్లాట్లే మిగిలాయి, ఇప్పుడే కన్ఫర్మ్ చేయండి
+        - ఇరవై నిమిషాల్లో ప్రీపెయిడ్ టాస్క్ పూర్తి చేయండి, లేదంటే కమిషన్ పోతుంది
+    emotional_lever: Fear of missing an opportunity that others are visibly taking.
+    likely_next_moves:
+      - stage: 5
+        move: The first prepaid task, a small deposit that returns with profit
+      - stage: 3
+        move: Move the conversation into a private chat with a mentor
+
+  - stage: 3
+    name: Isolation
+    description: >
+      Moved from the group into a private mentor chat, told not to discuss the
+      earnings, and surrounded by fake members whose enthusiasm replaces the
+      family's scepticism.
+    phrasing_patterns:
+      english:
+        - Do not discuss your earnings in the group, jealous members report accounts
+        - Talk to me directly, I will handle your account personally
+      hindi:
+        - Apni earning group mein mat bataiye, log jal kar account report karte hain
+        - Mujhse direct baat kijiye, main aapka account khud dekhta hoon
+      telugu:
+        - మీ సంపాదన గ్రూప్‌లో చెప్పకండి, కొందరు అసూయతో అకౌంట్ రిపోర్ట్ చేస్తారు
+        - నాతో నేరుగా మాట్లాడండి, మీ అకౌంట్ నేనే చూసుకుంటాను
+    emotional_lever: Feeling personally mentored, which converts a platform into a relationship.
+    likely_next_moves:
+      - stage: 5
+        move: A much larger deposit framed as a VIP tier
+      - stage: 4
+        move: Freeze the account after a wrong task and demand a penalty
+
+  - stage: 4
+    name: Escalating fear
+    description: >
+      The account is frozen mid withdrawal. The target now fears losing what is
+      already deposited, which is a stronger lever than the promised profit.
+    phrasing_patterns:
+      english:
+        - Your account is frozen for a wrong operation, clear the penalty to unlock
+        - If you stop now the entire balance is forfeited to the system
+      hindi:
+        - Galat operation ki wajah se account freeze hai, penalty bharke unlock kijiye
+        - Ab ruk gaye to poora balance system mein chala jayega
+      telugu:
+        - తప్పు ఆపరేషన్ వల్ల మీ అకౌంట్ ఫ్రీజ్ అయింది, పెనాల్టీ కట్టి అన్‌లాక్ చేయండి
+        - ఇప్పుడు ఆపితే మొత్తం బ్యాలెన్స్ సిస్టమ్‌కు పోతుంది
+    emotional_lever: Sunk cost, which is why targets deposit far beyond their means at this stage.
+    likely_next_moves:
+      - stage: 5
+        move: A withdrawal fee, a tax, or a credit score top up
+      - stage: 5
+        move: Encourage borrowing from family or a loan app to clear the block
+
+  - stage: 5
+    name: Payment instruction
+    description: >
+      Deposits to rotating personal accounts, then a chain of fees that must be
+      paid before a withdrawal that never completes.
+    phrasing_patterns:
+      english:
+        - Deposit to this account to unlock the next commission level
+        - Pay 30 percent tax first and the full withdrawal is released today
+      hindi:
+        - Agla commission level unlock karne ke liye is account mein deposit kijiye
+        - Pehle tees percent tax bhariye, aaj hi poora withdrawal release ho jayega
+      telugu:
+        - తదుపరి కమిషన్ లెవెల్ అన్‌లాక్ చేయడానికి ఈ ఖాతాకు డిపాజిట్ చేయండి
+        - ముందు 30 శాతం పన్ను కట్టండి, ఈరోజే పూర్తి విత్‌డ్రాయల్ విడుదల అవుతుంది
+    emotional_lever: The belief that the money is already earned and only needs releasing.
+    likely_next_moves:
+      - stage: 5
+        move: A further fee under a new name once the first is paid
+      - stage: 4
+        move: Freeze the account again if the target refuses

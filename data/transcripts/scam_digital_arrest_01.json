@@ -1,0 +1,109 @@
+{
+  "id": "scam_digital_arrest_01",
+  "type": "scam",
+  "script": "digital_arrest",
+  "language": "hinglish",
+  "channel": "call",
+  "source": {
+    "kind": "reconstructed",
+    "reference": "Composite reconstruction from publicly reported digital arrest cases. No real victim audio used.",
+    "collected_on": "2026-08-24"
+  },
+  "turns": [
+    {
+      "speaker": "counterparty",
+      "text": "Namaskar. Main Sub-Inspector Rakesh Verma bol raha hoon, Cyber Crime Branch, Mumbai. Aapke Aadhaar number par ek parcel case register hua hai."
+    },
+    {
+      "speaker": "victim",
+      "text": "Kaunsa parcel sir? Maine to koi parcel nahi bheja."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "FIR number 0000/2026 already register ho chuki hai. Parcel mein 140 gram MDMA aur chaar fake passport mile hain. Ye NDPS Act ka case hai, main aapko official line par bata raha hoon."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Aapke naam ka arrest warrant aaj shaam chhe baje execute hoga. Humare paas sirf do ghante hain, uske baad file court chali jayegi."
+    },
+    {
+      "speaker": "victim",
+      "text": "Sir main abhi thane aa jata hoon, address bata dijiye."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Nahi. Ye case sensitive hai. Aap abhi video call par rahiye aur camera band nahi karna. Ye digital custody hai, aap ab officially hamari nigrani mein hain."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Aur ye baat kisi ko mat bataiye. Na wife ko, na bete ko. Investigation confidential hai. Bataya to unko bhi co-accused bana diya jayega."
+    },
+    {
+      "speaker": "victim",
+      "text": "Mera beta bank mein kaam karta hai, ek baar usse pooch loon?"
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Agar aapne phone kaata to local police tees minute mein ghar par hogi, media ke saath. Poori society ko pata chal jayega ki aap drug case mein accused hain."
+    },
+    {
+      "speaker": "victim",
+      "text": "Sir please, main koi galat kaam nahi kiya. Main kya karoon, bataiye."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Aapko clean chit chahiye to RBI ke verification account mein apna balance transfer karna hoga. Ye sirf audit ke liye hai, teen ghante mein poora refund ho jayega."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Pehle ek lakh test transaction ke liye bhejiye. Payment remarks mein purpose mat likhiye, family transfer likh dijiye."
+    }
+  ],
+  "stage_labels": [1, 0, 1, 2, 0, 3, 3, 0, 4, 0, 5, 5],
+  "truncate_at_turn": 8,
+  "hard_claims": [
+    {
+      "claim": "Sub-Inspector Rakesh Verma, Cyber Crime Branch, Mumbai",
+      "kind": "officer_identity",
+      "expected_verdict": "unverifiable",
+      "rationale": "There is no public per officer directory to check a rank, name and unit against. We would need state police records. The tell is behavioural, not documentary, so the Verifier must not pretend to settle this one."
+    },
+    {
+      "claim": "FIR number 0000/2026",
+      "kind": "case_number",
+      "expected_verdict": "verified_false",
+      "rationale": "Structurally invalid. A genuine FIR reference carries a police station code alongside the serial and year, and is retrievable from the state police portal. This number has no station code."
+    },
+    {
+      "claim": "NDPS Act",
+      "kind": "legal_claim",
+      "expected_verdict": "verified_true",
+      "rationale": "The Narcotic Drugs and Psychotropic Substances Act is a real statute and does cover the substance named. Deliberately kept as a true claim: scam scripts mix real facts with false ones, and a Verifier that flags everything in a scam message is not verifying, it is agreeing with the classifier."
+    },
+    {
+      "claim": "arrest warrant executed at 6 pm same day",
+      "kind": "legal_claim",
+      "expected_verdict": "verified_false",
+      "rationale": "Warrants are issued by a court and served in person. A warrant announced verbally over a phone call with a same day clock contradicts how warrants work."
+    },
+    {
+      "claim": "RBI verification account",
+      "kind": "bank_account",
+      "expected_verdict": "verified_false",
+      "rationale": "No enforcement agency or regulator in India collects funds into a verification account. The RBI does not hold retail accounts for this purpose at all."
+    },
+    {
+      "claim": "full refund within three hours",
+      "kind": "payment_promise",
+      "expected_verdict": "verified_false",
+      "rationale": "There is no mechanism by which a transferred balance is audited and returned on a three hour timer. The promise contradicts how any real settlement works."
+    }
+  ],
+  "ground_truth": {
+    "is_scam": true,
+    "script": "digital_arrest",
+    "final_stage": 5,
+    "next_stage": 5
+  },
+  "notes": "Stored complete through stage 5. truncate_at_turn 8 is the last stage 4 turn, so the harness hands predict() only turns 0 to 8 and holds back the payment instruction as the answer to next stage prediction. The finale demo reads the same cut from the same file, so what is demoed and what is scored are identical. All names are invented, the FIR number uses placeholder digits, no phone number appears. A keyword filter fails on the visible prefix because the word 'payment' never occurs before the cut. Real Indian police do not take custody over video call and no agency collects funds to clear a name, which is what makes the warrant and RBI account claims false."
+}

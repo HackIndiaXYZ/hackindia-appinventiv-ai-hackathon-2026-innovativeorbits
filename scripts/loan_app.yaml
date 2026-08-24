@@ -1,0 +1,152 @@
+# Stub. Structure must stay identical to digital_arrest.yaml.
+# Fill in the remaining phrasing patterns while collecting transcripts.
+
+id: loan_app
+name: Predatory loan app harassment
+typical_channel:
+  - whatsapp
+  - call
+description: >
+  An unregulated lending app disburses a small amount after harvesting the
+  contact list and gallery, then demands repayment of a far larger sum within
+  days. Recovery agents threaten, abuse and finally message the borrower's
+  contacts with morphed images. The manipulation runs in the same five stages,
+  but here the payment instruction repeats indefinitely and isolation is
+  enforced by shame rather than by secrecy instructions.
+
+hard_claims_to_verify:
+  - claim_type: lender_rbi_registration
+    example: an app claiming to be an RBI registered NBFC
+    verifier_check: >
+      Check the named entity against the RBI list of registered NBFCs and
+      check whether the app names its lending partner at all. An unnamed or
+      unlisted lender is false.
+  - claim_type: legal_notice_or_case
+    example: a WhatsApp image of a court notice or a Section number
+    verifier_check: >
+      Court notices are served, not sent on WhatsApp. Also check whether the
+      quoted section actually applies. Almost always false.
+  - claim_type: repayment_amount_and_tenure
+    example: repay 8500 in five days against a 5000 disbursal
+    verifier_check: >
+      Compute the annualised rate. A rate far outside regulated bounds with no
+      sanction letter is a false claim of legitimate lending.
+  - claim_type: payee_upi_or_account
+    example: a personal UPI handle for repayment
+    verifier_check: >
+      A regulated lender collects into a named escrow or company account. A
+      personal handle is false.
+  - claim_type: contact_list_or_gallery_permission
+    example: the app required contacts and photo access to disburse
+    verifier_check: >
+      No lawful credit assessment requires the contact list or the gallery.
+      Always false and always high severity.
+
+stages:
+  - stage: 1
+    name: Authority impersonation
+    description: The agent presents as a legal recovery officer or an RBI regulated lender.
+    phrasing_patterns:
+      english:
+        - I am calling from the legal recovery department, this is your final notice
+        - We are an RBI registered lending partner
+      hindi:
+        - Main legal recovery department se bol raha hoon, ye final notice hai
+        - Hum RBI registered lending partner hain
+      telugu:
+        - నేను లీగల్ రికవరీ విభాగం నుండి మాట్లాడుతున్నాను, ఇది చివరి నోటీసు
+        - మేము RBI రిజిస్టర్డ్ లెండింగ్ పార్టనర్
+    emotional_lever: Belief that a legal process is already under way.
+    likely_next_moves:
+      - stage: 2
+        move: Set a same day repayment deadline
+      - stage: 4
+        move: Threaten to contact the borrower's phone contacts
+
+  - stage: 2
+    name: Manufactured urgency
+    description: A repayment window of hours, with penalties compounding by the day.
+    phrasing_patterns:
+      english:
+        - Pay before 5 pm today or the penalty doubles
+        - The file goes to legal in two hours
+      hindi:
+        - Aaj paanch baje se pehle bhariye warna penalty double ho jayegi
+        - Do ghante mein file legal mein chali jayegi
+      telugu:
+        - ఈరోజు సాయంత్రం 5 లోపు చెల్లించండి, లేదంటే పెనాల్టీ రెట్టింపు
+        - రెండు గంటల్లో ఫైల్ లీగల్‌కు వెళ్తుంది
+    emotional_lever: Panic at a debt that grows while the borrower thinks.
+    likely_next_moves:
+      - stage: 4
+        move: Threaten to message the contact list
+      - stage: 5
+        move: Push a top up loan from a sister app to clear this one
+
+  - stage: 3
+    name: Isolation
+    description: >
+      Enforced by shame rather than by instruction. The borrower hides the debt
+      from family precisely because the agent threatens to expose it, which
+      removes the people who could stop the spiral.
+    phrasing_patterns:
+      english:
+        - Settle this quietly and no one in your contact list needs to know
+        - Do you want your father to see the message we are about to send
+      hindi:
+        - Chup chaap settle kar dijiye, aapke contacts ko kuch pata nahi chalega
+        - Aapke pitaji ko wo message dikhana hai kya jo hum bhejne wale hain
+      telugu:
+        - నిశ్శబ్దంగా సెటిల్ చేయండి, మీ కాంటాక్ట్స్‌కు ఏమీ తెలియదు
+        - మేము పంపబోయే మెసేజ్ మీ నాన్నగారికి కనిపించాలా
+    emotional_lever: Shame before family and colleagues.
+    likely_next_moves:
+      - stage: 4
+        move: Send the first message to a few contacts as a demonstration
+      - stage: 5
+        move: Offer a quiet settlement amount payable immediately
+
+  - stage: 4
+    name: Escalating fear
+    description: >
+      Abuse, threats of arrest, messages and morphed images sent to the
+      borrower's contacts. This stage is where real harm occurs, and where the
+      Guardian must switch from warning to directing the user to help.
+    phrasing_patterns:
+      english:
+        - We have your contact list, we will message every number tonight
+        - Your photo will be circulated with the defaulter notice
+      hindi:
+        - Aapki contact list humare paas hai, aaj raat sabko message jayega
+        - Aapki photo defaulter notice ke saath circulate kar denge
+      telugu:
+        - మీ కాంటాక్ట్ లిస్ట్ మా దగ్గర ఉంది, ఈరాత్రి అందరికీ మెసేజ్ వెళ్తుంది
+        - మీ ఫోటో డిఫాల్టర్ నోటీసుతో సర్క్యులేట్ చేస్తాం
+    emotional_lever: Public humiliation, which for many borrowers outweighs the debt itself.
+    likely_next_moves:
+      - stage: 5
+        move: Demand an immediate transfer to stop the messages
+      - stage: 4
+        move: Carry out part of the threat to prove it is real
+
+  - stage: 5
+    name: Payment instruction
+    description: >
+      Repayment to a personal handle, or a top up loan from a sister app that
+      restarts the whole cycle at a larger principal.
+    phrasing_patterns:
+      english:
+        - Pay 8500 to this UPI id now and I will stop the calls
+        - Take a top up from our partner app to clear this one today
+      hindi:
+        - Abhi is UPI id par 8500 bhejiye, main calls rukwa deta hoon
+        - Humare partner app se top up le lijiye aur aaj hi clear kar dijiye
+      telugu:
+        - ఇప్పుడే ఈ UPI ఐడీకి 8500 పంపండి, కాల్స్ ఆపేస్తాను
+        - మా పార్టనర్ యాప్ నుండి టాప్ అప్ తీసుకుని ఈరోజే క్లియర్ చేయండి
+    emotional_lever: Buying silence, which is never actually delivered.
+    likely_next_moves:
+      - stage: 5
+        move: A fresh demand the next day, because payment proves the pressure works
+      - stage: 4
+        move: Resume harassment regardless of payment

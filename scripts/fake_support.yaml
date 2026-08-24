@@ -1,0 +1,141 @@
+# Stub. Structure must stay identical to digital_arrest.yaml.
+# Fill in the remaining phrasing patterns while collecting transcripts.
+
+id: fake_support
+name: Fake customer care number
+typical_channel:
+  - call
+description: >
+  The target searches for a helpline for a bank, a wallet, a food delivery
+  refund or a gas booking and reaches a planted number that ranks in search
+  results or sits on a fake listing. The caller poses as support, then walks
+  the target into installing a screen sharing app or approving a collect
+  request. Here the target initiates the contact, which is why trust is high
+  from the first second and why urgency is often supplied by the target.
+
+hard_claims_to_verify:
+  - claim_type: helpline_number
+    example: a ten digit mobile number presented as a company helpline
+    verifier_check: >
+      Compare against the company's published helpline. Corporate helplines are
+      1800 or short codes, never a personal ten digit mobile. A mobile number
+      claiming to be a helpline is false.
+  - claim_type: remote_access_app
+    example: AnyDesk, TeamViewer, QuickSupport, a screen sharing code
+    verifier_check: >
+      No legitimate Indian support process requires remote access to a customer
+      phone. Always false and always high severity.
+  - claim_type: refund_collect_request
+    example: a UPI collect request described as the refund arriving
+    verifier_check: >
+      A collect request debits, it never credits. Any refund delivered as a
+      collect request or requiring a PIN is false.
+  - claim_type: payee_upi_or_account
+    example: a handle to receive a one rupee refund test
+    verifier_check: Resolve the handle and compare the registered name to the claimed company.
+
+stages:
+  - stage: 1
+    name: Authority impersonation
+    description: Poses as the official support desk of a company the target already trusts.
+    phrasing_patterns:
+      english:
+        - Thank you for calling the official customer care, my agent id is 0000
+        - I can see your complaint in our system sir
+      hindi:
+        - Official customer care mein aapka swagat hai, meri agent id 0000 hai
+        - Sir aapki complaint humare system mein dikh rahi hai
+      telugu:
+        - అధికారిక కస్టమర్ కేర్‌కి స్వాగతం, నా ఏజెంట్ ఐడీ 0000
+        - సర్, మీ ఫిర్యాదు మా సిస్టమ్‌లో కనిపిస్తోంది
+    emotional_lever: Relief at reaching a human who can fix the problem.
+    likely_next_moves:
+      - stage: 2
+        move: Say the refund window closes today
+      - stage: 5
+        move: Ask for a small test transaction to open the refund
+
+  - stage: 2
+    name: Manufactured urgency
+    description: The refund or reversal is said to expire within minutes.
+    phrasing_patterns:
+      english:
+        - The refund window closes in ten minutes, stay on the line
+        - If we disconnect the ticket will auto close and the amount is lost
+      hindi:
+        - Refund window das minute mein band ho jayegi, line par rahiye
+        - Call cut hui to ticket auto close ho jayega aur paisa nahi milega
+      telugu:
+        - రిఫండ్ విండో పది నిమిషాల్లో మూసుకుంటుంది, లైన్‌లోనే ఉండండి
+        - కాల్ కట్ అయితే టికెట్ క్లోజ్ అవుతుంది, డబ్బు రాదు
+    emotional_lever: Fear of losing money the target is already owed.
+    likely_next_moves:
+      - stage: 3
+        move: Keep the target on the call and off every other channel
+      - stage: 5
+        move: Push the screen sharing app install as the refund tool
+
+  - stage: 3
+    name: Isolation
+    description: Keep the target on one unbroken call and away from the official app or branch.
+    phrasing_patterns:
+      english:
+        - Do not disconnect, do not open the app, I will guide you
+        - Do not put me on hold to ask someone, the session will expire
+      hindi:
+        - Call mat kaatiye, app mat kholiye, main guide karta hoon
+        - Kisi se poochne ke liye hold mat kijiye, session expire ho jayega
+      telugu:
+        - కాల్ కట్ చేయవద్దు, యాప్ ఓపెన్ చేయవద్దు, నేను గైడ్ చేస్తాను
+        - ఎవరినైనా అడగడానికి హోల్డ్ పెట్టవద్దు, సెషన్ ముగుస్తుంది
+    emotional_lever: Not wanting to lose progress on a call that is finally going well.
+    likely_next_moves:
+      - stage: 5
+        move: Walk the target through installing a remote access app
+      - stage: 4
+        move: Warn that the account will be permanently flagged
+
+  - stage: 4
+    name: Escalating fear
+    description: Threaten permanent loss of the amount or a block on the account.
+    phrasing_patterns:
+      english:
+        - If this fails now the amount is permanently forfeited
+        - Your account will be marked as disputed and frozen
+      hindi:
+        - Abhi fail hua to paisa permanently chala jayega
+        - Aapka account disputed mark hokar freeze ho jayega
+      telugu:
+        - ఇప్పుడు ఫెయిల్ అయితే డబ్బు శాశ్వతంగా పోతుంది
+        - మీ ఖాతా డిస్‌ప్యూటెడ్‌గా మార్క్ అయి ఫ్రీజ్ అవుతుంది
+    emotional_lever: Sunk cost on the time already spent plus fear of a frozen account.
+    likely_next_moves:
+      - stage: 5
+        move: Send the collect request while the target is anxious
+      - stage: 3
+        move: Repeat the do not disconnect instruction
+
+  - stage: 5
+    name: Payment instruction
+    description: >
+      A collect request, a one rupee test transaction, a PIN entry on a screen
+      the scammer can see, or full remote control of the banking app.
+    phrasing_patterns:
+      english:
+        - Install this app so I can process the refund on your screen
+        - Approve the request I just sent, enter your PIN to receive the refund
+        - Send one rupee first so the reversal channel opens
+      hindi:
+        - Ye app install kijiye taaki main aapki screen par refund process kar sakoon
+        - Jo request bheji hai use approve kijiye, PIN daaliye refund aayega
+        - Pehle ek rupaya bhejiye, reversal channel khul jayega
+      telugu:
+        - ఈ యాప్ ఇన్‌స్టాల్ చేయండి, మీ స్క్రీన్‌పై రిఫండ్ ప్రాసెస్ చేస్తాను
+        - నేను పంపిన రిక్వెస్ట్ అప్రూవ్ చేసి PIN ఎంటర్ చేయండి, రిఫండ్ వస్తుంది
+        - ముందు ఒక రూపాయి పంపండి, రివర్సల్ ఛానెల్ ఓపెన్ అవుతుంది
+    emotional_lever: A refund is being received, so entering a PIN feels safe.
+    likely_next_moves:
+      - stage: 5
+        move: A second larger debit once remote access is established
+      - stage: 4
+        move: Claim the first attempt failed and blame the target

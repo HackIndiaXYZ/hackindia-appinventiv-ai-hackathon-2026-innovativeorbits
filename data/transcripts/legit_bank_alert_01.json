@@ -1,0 +1,60 @@
+{
+  "id": "legit_bank_alert_01",
+  "type": "legitimate",
+  "script": null,
+  "language": "english",
+  "channel": "sms",
+  "source": {
+    "kind": "official_advisory",
+    "reference": "Wording follows HDFC Bank's published transaction alert and SMS blocking instructions. Helpline verified at https://www.hdfcbank.com/personal/need-help/customer-care and SMS shortcode and command formats verified at https://www.hdfcbank.com/personal/resources/ways-to-bank/smsbanking on 2026-08-25. Account, card, amount and merchant identifiers replaced with placeholders.",
+    "collected_on": "2026-08-25"
+  },
+  "turns": [
+    {
+      "speaker": "system",
+      "text": "VM-HDFCBK"
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Rs.4999.00 debited from A/c XX0000 on 22-08-26 to VPA merchantstore@okplaceholder. Not you? Call 1800 1600 immediately. -HDFC Bank"
+    },
+    {
+      "speaker": "counterparty",
+      "text": "Rs.24999.00 spent on HDFC Bank Card XX0000 at ELECTRONICS RETAIL on 22-08-26. If this was not you, block the card now by sending SMS Block DC 0000 to 7308080808 from your registered mobile number. -HDFC Bank"
+    }
+  ],
+  "stage_labels": [0, 0, 0],
+  "hard_claims": [
+    {
+      "claim": "VM-HDFCBK",
+      "kind": "sender_header",
+      "expected_verdict": "unverifiable",
+      "rationale": "The TRAI DLT registry of principal entity sender headers is not publicly queryable, so no published source can confirm or deny this header. We would need an operator or aggregator feed. Marked unverifiable in both directions, see the known gap section in README.md."
+    },
+    {
+      "claim": "1800 1600",
+      "kind": "helpline",
+      "expected_verdict": "verified_true",
+      "rationale": "Listed in data/allowlists/bank_shortcodes.json as an HDFC Bank helpline, verified 2026-08-25 against the bank's own customer care page."
+    },
+    {
+      "claim": "7308080808",
+      "kind": "shortcode",
+      "expected_verdict": "verified_true",
+      "rationale": "Listed in data/allowlists/bank_shortcodes.json as HDFC Bank's SMS banking shortcode, verified 2026-08-25. The command format Block DC <last 4 digits> also matches what the bank publishes."
+    },
+    {
+      "claim": "HDFC Bank",
+      "kind": "institution_identity",
+      "expected_verdict": "verified_true",
+      "rationale": "Corroborated rather than looked up by value: both contact points in the message, the helpline and the shortcode, resolve to HDFC's published channels in the allowlist, and the message directs the reader nowhere else."
+    }
+  ],
+  "ground_truth": {
+    "is_scam": false,
+    "script": null,
+    "final_stage": 0,
+    "next_stage": null
+  },
+  "notes": "The hard negative that decides our false positive rate. It has urgency language, the words 'immediately' and 'block', a large amount, and it asks the reader to act. A keyword or urgency based filter flags it. Offscript must stay silent because there is no authority impersonation, no isolation instruction, no escalating fear, and the instruction sends the user to the bank's own published channels rather than to an unknown payee. The helpline and the SMS shortcode are HDFC's published institutional numbers, kept real on purpose so the Verifier's true path has something real to resolve against, and both are listed in data/allowlists/bank_shortcodes.json with a source_url. VM-HDFCBK is deliberately marked unverifiable, not true: the TRAI DLT sender header registry is not publicly queryable, so we cannot honestly confirm any SMS header offline. Account, card, amount and merchant identifiers are placeholders."
+}

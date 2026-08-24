@@ -1,0 +1,199 @@
+# Offscript script taxonomy
+# This file is the reference structure. Every other script in this folder must
+# use the same field names and the same five stages.
+
+id: digital_arrest
+name: Fake police or CBI custody threat
+typical_channel:
+  - call
+description: >
+  The caller claims to be police, CBI, ED, customs or a telecom regulator and
+  tells the target that a parcel, SIM or bank account in their name is tied to
+  a serious crime. The target is kept on a video call under so called digital
+  custody, cut off from family, frightened for hours, then instructed to
+  transfer money to a verification account for a refund that never comes.
+  There is no such thing as digital arrest in Indian law. No agency takes
+  custody over a video call and no agency asks for money to clear a name.
+
+hard_claims_to_verify:
+  - claim_type: officer_identity
+    example: Sub-Inspector Rakesh Verma, Cyber Crime Branch, Mumbai
+    verifier_check: >
+      Rank, name and unit cannot be confirmed offline. Mark unverifiable, but
+      flag that a genuine officer will not refuse an in person visit to the
+      station, which is the actual tell.
+  - claim_type: fir_or_case_number
+    example: FIR number 0000/2026
+    verifier_check: >
+      Check against the state FIR format, which is a serial number, a police
+      station code and a year. A number quoted without a station code is
+      structurally invalid. Genuine FIRs are retrievable from the state police
+      portal, a number that is not is false.
+  - claim_type: warrant_deadline
+    example: arrest warrant executed at 6 pm same day
+    verifier_check: >
+      Warrants are issued by a court and served in person. A verbal warrant
+      with a same day clock is always false.
+  - claim_type: payee_account_or_upi
+    example: rbi verification account, a UPI handle, an IFSC and account number
+    verifier_check: >
+      No enforcement agency in India collects funds into a personal or current
+      account for verification. Any payee here is false. Also check whether the
+      handle resolves and whether the account name matches the claimed agency.
+  - claim_type: video_call_platform
+    example: a Skype or WhatsApp video call framed as an official courtroom
+    verifier_check: >
+      Official proceedings do not happen on consumer video apps. False.
+
+stages:
+  - stage: 1
+    name: Authority impersonation
+    description: >
+      Establish that the caller outranks the target and that the target is
+      already inside a legal process they did not know about. Delivered calmly
+      and procedurally, not aggressively, because calm reads as real.
+    phrasing_patterns:
+      english:
+        - I am calling from the Cyber Crime Branch
+        - A case has been registered against your Aadhaar number
+        - Your SIM will be deactivated in two hours by the department
+        - This is an official line, the call is being recorded
+      hindi:
+        - Main Cyber Crime Branch se bol raha hoon
+        - Aapke Aadhaar par case register ho chuka hai
+        - Ye call department ki official line par record ho rahi hai
+        - Aapke naam ka parcel customs mein pakda gaya hai
+      telugu:
+        - నేను సైబర్ క్రైమ్ విభాగం నుండి మాట్లాడుతున్నాను
+        - మీ ఆధార్ నంబర్ మీద కేసు నమోదైంది
+        - ఇది అధికారిక లైన్, ఈ కాల్ రికార్డ్ అవుతోంది
+        - మీ పేరుతో వచ్చిన పార్సిల్ కస్టమ్స్‌లో పట్టుబడింది
+    emotional_lever: >
+      Deference to authority. The target switches from evaluating the caller to
+      cooperating with an institution.
+    likely_next_moves:
+      - stage: 2
+        move: Attach a same day deadline to the case so the target cannot pause
+      - stage: 4
+        move: Name a severe charge such as NDPS or money laundering to raise stakes early
+
+  - stage: 2
+    name: Manufactured urgency
+    description: >
+      Compress the decision window. A warrant time, a court cut off, a transfer
+      that must happen before the shift ends. The target is denied the one
+      thing that breaks the script, which is time to check.
+    phrasing_patterns:
+      english:
+        - We have only two hours before the file goes to the court
+        - The warrant will be executed at six pm today
+        - If you disconnect the case moves to non bailable
+      hindi:
+        - Sirf do ghante hain, uske baad file court chali jayegi
+        - Warrant aaj shaam chhe baje execute hoga
+        - Phone kaata to case non bailable ho jayega
+      telugu:
+        - రెండు గంటల సమయం మాత్రమే ఉంది, ఆ తర్వాత ఫైల్ కోర్టుకు వెళ్తుంది
+        - వారెంట్ ఈరోజు సాయంత్రం ఆరు గంటలకు అమలవుతుంది
+        - ఫోన్ కట్ చేస్తే కేసు నాన్ బెయిలబుల్ అవుతుంది
+    emotional_lever: >
+      Loss aversion under a clock. Deliberation is reframed as the thing that
+      causes the loss.
+    likely_next_moves:
+      - stage: 3
+        move: Forbid contact with family so no one can supply the missing time
+      - stage: 4
+        move: Threaten immediate physical arrest if the call is ended
+
+  - stage: 3
+    name: Isolation
+    description: >
+      Cut every channel that could produce a second opinion. Framed as
+      confidentiality of the investigation rather than as a restriction, and
+      often enforced by keeping the target on an unbroken video call.
+    phrasing_patterns:
+      english:
+        - Do not tell anyone, not even your family, the investigation is confidential
+        - Stay on this video call, do not switch off the camera, this is digital custody
+        - If you inform anyone they will be treated as a co accused
+        - Go into a room alone and lock the door
+      hindi:
+        - Ye baat kisi ko mat bataiye, na wife ko na bete ko
+        - Video call par rahiye, camera band nahi karna, ye digital custody hai
+        - Kisi ko bataya to unko bhi co accused bana denge
+        - Akele kamre mein jaiye aur darwaza band kar lijiye
+      telugu:
+        - ఈ విషయం ఇంట్లో ఎవరికీ చెప్పకండి, దర్యాప్తు గోప్యమైనది
+        - వీడియో కాల్‌లోనే ఉండండి, కెమెరా ఆఫ్ చేయకండి, ఇది డిజిటల్ కస్టడీ
+        - ఎవరికైనా చెబితే వాళ్లను కూడా నిందితులుగా చేర్చుతాం
+        - ఒంటరిగా గదిలోకి వెళ్లి తలుపు వేయండి
+    emotional_lever: >
+      Protecting the family, inverted. The target stays silent believing silence
+      keeps the family safe, which removes their only realistic rescue.
+    likely_next_moves:
+      - stage: 4
+        move: Escalate with a fabricated senior officer or a fake arrest memo on screen
+      - stage: 5
+        move: Move straight to a verification transfer while the target is alone
+
+  - stage: 4
+    name: Escalating fear
+    description: >
+      Raise the cost of non compliance until judgement collapses. Fake documents
+      shown on the video call, a handover to a senior officer, threats about
+      reputation, the family, the job, or a police team arriving with media.
+    phrasing_patterns:
+      english:
+        - Local police will reach your house in thirty minutes with the media
+        - I am transferring you to the senior officer, do not speak unless asked
+        - Your entire society will know you are accused in a drug case
+        - Your daughter's passport verification will also be cancelled
+      hindi:
+        - Local police tees minute mein ghar par hogi, media ke saath
+        - Main senior officer ko transfer kar raha hoon, bina pooche mat boliye
+        - Poori society ko pata chal jayega ki aap drug case mein accused hain
+        - Aapki beti ka passport verification bhi cancel ho jayega
+      telugu:
+        - లోకల్ పోలీసులు ముప్పై నిమిషాల్లో మీడియాతో మీ ఇంటికి వస్తారు
+        - సీనియర్ అధికారికి కాల్ ట్రాన్స్‌ఫర్ చేస్తున్నాను, అడిగితేనే మాట్లాడండి
+        - మీరు డ్రగ్ కేసులో నిందితులని కాలనీ మొత్తానికి తెలిసిపోతుంది
+        - మీ అమ్మాయి పాస్‌పోర్ట్ వెరిఫికేషన్ కూడా రద్దవుతుంది
+    emotional_lever: >
+      Shame and fear for dependents, which override financial caution more
+      reliably than fear of loss does.
+    likely_next_moves:
+      - stage: 5
+        move: Offer the exit, a refundable verification transfer that clears the name
+      - stage: 3
+        move: Re-tighten isolation if the target mentions calling someone
+
+  - stage: 5
+    name: Payment instruction
+    description: >
+      The only exit offered is money, and it is always framed as temporary,
+      refundable and procedural rather than as a payment. Often split across
+      several transfers with the first kept small to establish compliance.
+    phrasing_patterns:
+      english:
+        - Transfer the funds to this RBI verification account, it is refunded in three hours
+        - We need to audit your account, send the balance and it returns after clearance
+        - Send ten thousand first as a test transaction to confirm the channel
+        - Do not mention the purpose in the payment remarks, write family transfer
+      hindi:
+        - RBI verification account mein funds transfer kijiye, teen ghante mein refund ho jayega
+        - Aapka account audit karna hai, balance bhejiye, clearance ke baad wapas aa jayega
+        - Pehle das hazaar test transaction ke liye bhejiye
+        - Remarks mein purpose mat likhiye, family transfer likh dijiye
+      telugu:
+        - ఈ RBI వెరిఫికేషన్ ఖాతాకు డబ్బు పంపండి, మూడు గంటల్లో రిఫండ్ అవుతుంది
+        - మీ ఖాతా ఆడిట్ చేయాలి, బ్యాలెన్స్ పంపండి, క్లియరెన్స్ తర్వాత తిరిగి వస్తుంది
+        - ముందు పది వేలు టెస్ట్ ట్రాన్సాక్షన్‌గా పంపండి
+        - రిమార్క్స్‌లో కారణం రాయవద్దు, ఫ్యామిలీ ట్రాన్స్‌ఫర్ అని రాయండి
+    emotional_lever: >
+      Relief. After hours of fear the target is offered a way out and takes it
+      without evaluating it, because it is presented as the end of the ordeal.
+    likely_next_moves:
+      - stage: 5
+        move: A second larger transfer, because the first one is now sunk cost
+      - stage: 4
+        move: Renewed threats if the target hesitates or the transfer fails

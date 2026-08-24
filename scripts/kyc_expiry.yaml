@@ -1,0 +1,142 @@
+# Stub. Structure must stay identical to digital_arrest.yaml.
+# Fill in the remaining phrasing patterns while collecting transcripts.
+
+id: kyc_expiry
+name: Bank or wallet KYC expiry
+typical_channel:
+  - sms
+  - whatsapp
+description: >
+  A message claiming to be from a bank, wallet or payments app says the
+  account KYC has expired and will be blocked tonight unless it is updated
+  through a link. The link leads to a credential harvesting page or an APK.
+  Real banks never complete KYC through a link sent over WhatsApp and never
+  ask for a small verification payment.
+
+hard_claims_to_verify:
+  - claim_type: sms_sender_id
+    example: AD-HDFCBNK
+    verifier_check: >
+      Check the six character header against the registered DLT sender list.
+      Lookalike headers that are not registered are false. This is the single
+      strongest deterministic signal in this script.
+  - claim_type: url
+    example: http://hdfc-kyc-update.invalid/verify
+    verifier_check: >
+      Check the registrable domain against the bank's official domain and check
+      registration age. A domain younger than about thirty days impersonating a
+      bank is false.
+  - claim_type: payee_upi_or_account
+    example: hdfckyc.verify@okplaceholder
+    verifier_check: >
+      Resolve the handle and compare the registered name against the claimed
+      bank. A personal name behind a bank branded handle is false.
+  - claim_type: apk_or_app_install
+    example: an attached apk described as the bank KYC app
+    verifier_check: >
+      Banks distribute only through official app stores. A direct apk is false.
+
+stages:
+  - stage: 1
+    name: Authority impersonation
+    description: The message presents itself as the bank's official verification department.
+    phrasing_patterns:
+      english:
+        - This is an official message from the bank verification department
+        - Dear customer, your account KYC has expired
+      hindi:
+        - Priya grahak, aapki bank KYC expire ho chuki hai
+        - Ye bank ke verification department ka official message hai
+      telugu:
+        - ప్రియమైన కస్టమర్, మీ ఖాతా KYC గడువు ముగిసింది
+        - ఇది బ్యాంక్ వెరిఫికేషన్ విభాగం నుండి అధికారిక సందేశం
+    emotional_lever: Trust in the bank brand.
+    likely_next_moves:
+      - stage: 2
+        move: Attach a same night account block deadline
+      - stage: 5
+        move: Send the link immediately if the target replies quickly
+
+  - stage: 2
+    name: Manufactured urgency
+    description: A short deadline after which the account or the money is said to be frozen.
+    phrasing_patterns:
+      english:
+        - Your account will be blocked tonight at 11 pm
+        - Update within 24 hours or your balance will be frozen
+      hindi:
+        - Aaj raat gyarah baje aapka account block ho jayega
+        - Chaubees ghante mein update kijiye warna paisa freeze ho jayega
+      telugu:
+        - ఈరోజు రాత్రి 11 గంటలకు మీ ఖాతా బ్లాక్ అవుతుంది
+        - 24 గంటల్లోపు అప్‌డేట్ చేయకపోతే నగదు ఫ్రీజ్ అవుతుంది
+    emotional_lever: Fear of losing access to one's own money.
+    likely_next_moves:
+      - stage: 3
+        move: Block the branch as an alternative so the link is the only path
+      - stage: 5
+        move: Push the link and a small verification payment
+
+  - stage: 3
+    name: Isolation
+    description: >
+      Rule out the branch, the official app and the family. Often disguised as
+      standard OTP safety advice, which is what makes it hard to detect.
+    phrasing_patterns:
+      english:
+        - The branch server is down, only online works right now
+        - Do not share your OTP with anyone except me, I am the verification officer
+      hindi:
+        - Branch ka server down hai, abhi sirf online chalega
+        - OTP kisi ko mat bataiye, sirf mujhe, main verification officer hoon
+      telugu:
+        - బ్రాంచ్ సర్వర్ డౌన్ ఉంది, ఆన్‌లైన్ మాత్రమే పని చేస్తుంది
+        - OTP ఎవరితోనూ పంచుకోవద్దు, నాతో మాత్రమే
+    emotional_lever: Compliance with a safety rule the target already believes in.
+    likely_next_moves:
+      - stage: 4
+        move: Raise the consequence to EMI bounce and credit score damage
+      - stage: 5
+        move: Send the link while the target is still alone with the phone
+
+  - stage: 4
+    name: Escalating fear
+    description: Widen the damage beyond this account to credit, loans and salary.
+    phrasing_patterns:
+      english:
+        - Your EMI will bounce and your CIBIL score will be damaged
+        - No bank will give you a loan after this
+      hindi:
+        - Aapki EMI bounce hogi aur CIBIL score kharab ho jayega
+        - Iske baad koi bank loan nahi dega
+      telugu:
+        - మీ EMI బౌన్స్ అవుతుంది, CIBIL స్కోర్ దెబ్బతింటుంది
+        - ఆ తర్వాత ఏ బ్యాంకు లోన్ ఇవ్వదు
+    emotional_lever: Fear of long term financial exclusion.
+    likely_next_moves:
+      - stage: 5
+        move: Present the link and a token payment as the fix
+      - stage: 3
+        move: Repeat the OTP only to me instruction as the target hesitates
+
+  - stage: 5
+    name: Payment instruction
+    description: >
+      A link, a small verification payment, or an OTP request. The amount is
+      kept trivial because the real objective is the credential or the mandate.
+    phrasing_patterns:
+      english:
+        - Open this link and pay Rs 10 for verification
+        - Share the OTP you just received to complete the KYC update
+      hindi:
+        - Is link par jaakar das rupaye verification ke liye bhejiye
+        - Abhi jo OTP aaya hai wo bataiye, KYC update ho jayegi
+      telugu:
+        - ఈ లింక్ ఓపెన్ చేసి రూ. 10 వెరిఫికేషన్ చెల్లింపు చేయండి
+        - ఇప్పుడు వచ్చిన OTP చెప్పండి, KYC అప్‌డేట్ అవుతుంది
+    emotional_lever: The amount is small enough to feel like no decision at all.
+    likely_next_moves:
+      - stage: 5
+        move: A second request framed as the first payment having failed
+      - stage: 4
+        move: Threaten immediate block if the OTP is not shared

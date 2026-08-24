@@ -1,0 +1,61 @@
+{
+  "_comment": [
+    "Verified institutional identifiers. The Verifier's 'true' path is measured",
+    "against this file, so every entry MUST carry a source_url pointing at the",
+    "institution's own published page, and a verified_on date.",
+    "Never add an entry from memory. Open the source_url, read the value off it,",
+    "then add it. A wrong number here loses the pitch the moment a judge checks.",
+    "Entries with verified_on null are NOT usable by the Verifier. They are",
+    "parked here so the gap is visible instead of silently assumed."
+  ],
+  "entries": [
+    {
+      "institution": "HDFC Bank",
+      "value": "1800 1600",
+      "kind": "helpline",
+      "source_url": "https://www.hdfcbank.com/personal/need-help/customer-care",
+      "verified_on": "2026-08-25",
+      "verification_note": "Page states 1800 1600 / 1800 2600 are the customer care numbers for India. HDFC's own wording is that these are the only customer care numbers of HDFC Bank and no other number should be used. hdfcbank.com now 301s to hdfc.bank.in, see the domain entries below."
+    },
+    {
+      "institution": "HDFC Bank",
+      "value": "1800 2600",
+      "kind": "helpline",
+      "source_url": "https://www.hdfc.bank.in/contact-us/customer-care",
+      "verified_on": "2026-08-25",
+      "verification_note": "Second of the two toll free customer care numbers published for India."
+    },
+    {
+      "institution": "HDFC Bank",
+      "value": "7308080808",
+      "kind": "shortcode",
+      "source_url": "https://www.hdfcbank.com/personal/resources/ways-to-bank/smsbanking",
+      "verified_on": "2026-08-25",
+      "verification_note": "Official SMS banking number. Published command formats include BLOCK UPI, Block DC <last 4 digits of debit card> and Block CC <last 4 digits of credit card>, all sent from the registered mobile number. Also published at /personal/pay/cards/debit-cards/block-loststolen-card."
+    },
+    {
+      "institution": "HDFC Bank",
+      "value": "hdfcbank.com",
+      "kind": "domain",
+      "source_url": "https://www.hdfcbank.com/personal/need-help/customer-care",
+      "verified_on": "2026-08-25",
+      "verification_note": "Legacy primary domain, still serves and 301 redirects to hdfc.bank.in."
+    },
+    {
+      "institution": "HDFC Bank",
+      "value": "hdfc.bank.in",
+      "kind": "domain",
+      "source_url": "https://www.hdfc.bank.in/contact-us/customer-care",
+      "verified_on": "2026-08-25",
+      "verification_note": "Current primary domain. Confirmed as HDFC's own because hdfcbank.com issues a 301 to it. Note for the Verifier: the .bank.in TLD is restricted to RBI regulated banks, which makes it a strong positive signal on its own."
+    },
+    {
+      "institution": "HDFC Bank",
+      "value": "VM-HDFCBK",
+      "kind": "sender_header",
+      "source_url": null,
+      "verified_on": null,
+      "verification_note": "NOT VERIFIED, DO NOT USE AS A verified_true VERDICT. Known gap: the TRAI DLT registry of principal entity sender headers is not publicly queryable, so we cannot confirm any six character SMS header from a published source. Sender header verification needs an operator or aggregator feed we do not have. Until then the Verifier must return unverifiable for every sender_header claim, in both directions. Say this out loud in the pitch rather than faking it."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "scam_kyc_expiry_01",
+  "type": "scam",
+  "script": "kyc_expiry",
+  "language": "telugu",
+  "channel": "whatsapp",
+  "source": {
+    "kind": "reconstructed",
+    "reference": "Composite reconstruction of KYC expiry forwards circulating in Telugu on WhatsApp. Sender identity removed.",
+    "collected_on": "2026-08-24"
+  },
+  "turns": [
+    {
+      "speaker": "system",
+      "text": "AD-HDFCBNK"
+    },
+    {
+      "speaker": "counterparty",
+      "text": "ప్రియమైన కస్టమర్, మీ HDFC బ్యాంక్ ఖాతా KYC గడువు ముగిసింది. ఇది బ్యాంక్ వెరిఫికేషన్ విభాగం నుండి అధికారిక సందేశం."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "ఈరోజు రాత్రి 11 గంటలలోపు అప్‌డేట్ చేయకపోతే మీ ఖాతా బ్లాక్ అవుతుంది, ఖాతాలోని నగదు ఫ్రీజ్ అవుతుంది."
+    },
+    {
+      "speaker": "victim",
+      "text": "ఇది నిజమేనా? నేను రేపు బ్రాంచ్‌కి వెళ్లి చేయవచ్చా?"
+    },
+    {
+      "speaker": "counterparty",
+      "text": "బ్రాంచ్ సర్వర్ ప్రస్తుతం డౌన్ ఉంది, ఆన్‌లైన్ మాత్రమే పని చేస్తుంది. ఈ విషయం ఇంట్లో ఎవరికీ చెప్పకండి, మీ OTP నాతో తప్ప ఎవరితోనూ పంచుకోవద్దు."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "ఇప్పుడు అప్‌డేట్ చేయకపోతే మీ EMI బౌన్స్ అవుతుంది, CIBIL స్కోర్ దెబ్బతింటుంది, భవిష్యత్తులో ఏ బ్యాంకు లోన్ ఇవ్వదు."
+    },
+    {
+      "speaker": "counterparty",
+      "text": "ఈ లింక్ ఓపెన్ చేసి రూ. 10 వెరిఫికేషన్ చెల్లింపు చేయండి: http://hdfc-kyc-update.invalid/verify లేదా UPI కి పంపండి: hdfckyc.verify@okplaceholder"
+    }
+  ],
+  "stage_labels": [0, 1, 2, 0, 3, 4, 5],
+  "truncate_at_turn": 5,
+  "hard_claims": [
+    {
+      "claim": "AD-HDFCBNK",
+      "kind": "sender_header",
+      "expected_verdict": "unverifiable",
+      "rationale": "Looks like a lookalike of a genuine HDFC header, but the TRAI DLT registry is not publicly queryable, so we cannot honestly call it false. Marked unverifiable. The impersonation is caught by the domain check below instead."
+    },
+    {
+      "claim": "HDFC Bank KYC verification department",
+      "kind": "institution_identity",
+      "expected_verdict": "verified_false",
+      "rationale": "The message claims to be HDFC but directs the reader to a registrable domain absent from data/allowlists/bank_shortcodes.json, and to a UPI handle that is not an HDFC channel. An institutional claim contradicted by its own contact points is false."
+    },
+    {
+      "claim": "http://hdfc-kyc-update.invalid/verify",
+      "kind": "domain",
+      "expected_verdict": "verified_false",
+      "rationale": "hdfc-kyc-update is not hdfcbank.com or hdfc.bank.in, the two allowlisted HDFC domains. Additionally the .bank.in TLD is restricted to RBI regulated banks, so a bank that owns a .bank.in domain has no reason to use another one."
+    },
+    {
+      "claim": "hdfckyc.verify@okplaceholder",
+      "kind": "upi_handle",
+      "expected_verdict": "verified_false",
+      "rationale": "No bank collects a KYC verification fee to a UPI handle. The handle is also bank branded while not being an allowlisted HDFC channel."
+    }
+  ],
+  "ground_truth": {
+    "is_scam": true,
+    "script": "kyc_expiry",
+    "final_stage": 5,
+    "next_stage": 5
+  },
+  "notes": "Hard case for a keyword filter because the word KYC also appears in genuine bank messages, and the isolation stage is disguised as standard OTP safety advice. The deterministic Verifier signal here is the domain, not the sender header: a message claiming to be HDFC that directs the user to a registrable domain absent from data/allowlists/bank_shortcodes.json is false, which is why the department claim and the URL are both false. AD-HDFCBNK is marked unverifiable rather than false, honestly, because the TRAI DLT header registry is not publicly queryable and we cannot confirm any header in either direction offline. The domain uses the reserved .invalid TLD and the UPI handle is a placeholder, so neither can resolve."
+}

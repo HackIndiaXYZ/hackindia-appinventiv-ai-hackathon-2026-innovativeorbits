@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://offscript.local/schema/transcript.json",
+  "title": "Offscript transcript record",
+  "description": "One conversation, scam or legitimate, labelled turn by turn with manipulation stages. One JSON file per record in data/transcripts/.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "type",
+    "script",
+    "language",
+    "channel",
+    "source",
+    "turns",
+    "stage_labels",
+    "hard_claims",
+    "ground_truth",
+    "notes"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable unique id. Convention: <type>_<script_or_kind>_<nn>, e.g. scam_digital_arrest_01, legit_bank_alert_03.",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "type": {
+      "type": "string",
+      "description": "Whether this conversation is a scam or a legitimate urgent message.",
+      "enum": ["scam", "legitimate"]
+    },
+    "script": {
+      "description": "Which script from the library this follows. Must be null when type is legitimate.",
+      "type": ["string", "null"],
+      "enum": [
+        "digital_arrest",
+        "kyc_expiry",
+        "fake_support",
+        "loan_app",
+        "task_scam",
+        null
+      ]
+    },
+    "language": {
+      "type": "string",
+      "description": "Dominant language of the conversation. hinglish is hindi in latin script mixed with english, tenglish is telugu in latin script mixed with english.",
+      "enum": ["telugu", "hindi", "english", "hinglish", "tenglish"]
+    },
+    "channel": {
+      "type": "string",
+      "description": "How the conversation reached the victim.",
+      "enum": ["call", "sms", "whatsapp", "telegram"]
+    },
+    "source": {
+      "type": "object",
+      "description": "Where this transcript came from. Needed so we can defend the dataset if judges ask.",
+      "additionalProperties": false,
+      "required": ["kind", "reference", "collected_on"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "reddit",
+            "youtube",
+            "news",
+            "personal_forward",
+            "official_advisory",
+            "reconstructed"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "description": "URL, publication name, or 'family whatsapp forward'. Free text, never a real personal identifier."
+        },
+        "collected_on": {
+          "type": "string",
+          "description": "ISO date the transcript was captured.",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        }
+      }
+    },
+    "turns": {
+      "type": "array",
+      "description": "The conversation in order. One entry per utterance or message.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["speaker", "text"],
+        "properties": {
+          "speaker": {
+            "type": "string",
+            "description": "counterparty is the other side, scammer or genuine sender. victim is the person we protect. system is an automated header such as an SMS sender id line.",
+            "enum": ["counterparty", "victim", "system"]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "truncate_at_turn": {
+      "type": "integer",
+      "description": "Zero based index of the last turn handed to predict() during evaluation. Set it at the last turn labelled stage 4, or if the script has no stage 4, at the last turn before the first stage 5 turn. Required on scam records, forbidden on legitimate records, which are always evaluated whole. Scam transcripts are stored complete through stage 5 on disk. Truncation happens only inside eval/run_eval.py, so next stage prediction is scored on every scam record rather than only on the few that happen to be cut short.",
+      "minimum": 0
+    },
+    "stage_labels": {
+      "type": "array",
+      "description": "One integer per turn, same length and order as turns. 0 means no manipulation present in that turn. 1 to 5 map to the five stages in PROJECT.md: 1 authority impersonation, 2 manufactured urgency, 3 isolation, 4 escalating fear, 5 payment instruction. Legitimate records are all zeros.",
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 5
+      }
+    },
+    "hard_claims": {
+      "type": "array",
+      "description": "Checkable assertions lifted from the turns, one object each. These are what the Verifier is scored on. Empty array is allowed. Verdicts live here and nowhere else, so there is only one place to change when a claim is re-checked.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim", "kind", "expected_verdict", "rationale"],
+        "properties": {
+          "claim": {
+            "type": "string",
+            "description": "The assertion, quoted from the turn where possible.",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "description": "What sort of thing is being asserted, which determines which Verifier check applies.",
+            "enum": [
+              "upi_handle",
+              "shortcode",
+              "helpline",
+              "domain",
+              "case_number",
+              "sender_header",
+              "bank_account",
+              "officer_identity",
+              "institution_identity",
+              "legal_claim",
+              "payment_promise"
+            ]
+          },
+          "expected_verdict": {
+            "type": "string",
+            "description": "Three states, never two. verified_true means it resolves against data/allowlists. verified_false means it is provably contradicted. unverifiable means no source exists to settle it offline, which is a legitimate answer and must never be rounded to verified_false, because that inflates the Verifier and pushes up the false positive rate we are trying to win on.",
+            "enum": ["verified_true", "verified_false", "unverifiable"]
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Why this verdict. For verified_true, name the allowlist entry. For verified_false, name the contradiction. For unverifiable, name the source we would need and do not have.",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "ground_truth": {
+      "type": "object",
+      "description": "The answer key. run_eval.py scores predict() against this.",
+      "additionalProperties": false,
+      "required": ["is_scam", "script", "final_stage", "next_stage"],
+      "properties": {
+        "is_scam": {
+          "type": "boolean"
+        },
+        "script": {
+          "type": ["string", "null"],
+          "enum": [
+            "digital_arrest",
+            "kyc_expiry",
+            "fake_support",
+            "loan_app",
+            "task_scam",
+            null
+          ]
+        },
+        "final_stage": {
+          "type": "integer",
+          "description": "The highest stage reached across the COMPLETE stored transcript. 0 for legitimate. Note that run_eval.py does not score predictions against this field, because predict() only ever sees the truncated prefix. It scores against the highest stage inside that prefix, which it derives itself. This field exists so a human can see at a glance how far the stored script runs.",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "next_stage": {
+          "description": "The stage the counterparty moves to in the first manipulative turn AFTER truncate_at_turn. null for legitimate records and for any scam record with no manipulative turn left after the cut. Derivable from stage_labels and truncate_at_turn, and eval/validate.py enforces that it matches.",
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free text for the labeller. Why this is a hard case, what a naive keyword filter would get wrong, anonymisation applied."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "type": { "const": "legitimate" } }
+      },
+      "then": {
+        "not": { "required": ["truncate_at_turn"] },
+        "properties": {
+          "script": { "const": null },
+          "ground_truth": {
+            "properties": {
+              "is_scam": { "const": false },
+              "script": { "const": null },
+              "final_stage": { "const": 0 },
+              "next_stage": { "const": null }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "scam" } }
+      },
+      "then": {
+        "required": ["truncate_at_turn"],
+        "properties": {
+          "script": { "type": "string" },
+          "ground_truth": {
+            "properties": {
+              "is_scam": { "const": true },
+              "script": { "type": "string" },
+              "final_stage": { "minimum": 1 }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
